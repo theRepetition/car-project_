@@ -19,13 +19,67 @@
 
     <Button
         android:id="@+id/button_notify"
-        android:layout_width="227dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="178dp"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="152dp"
+        android:layout_marginBottom="300dp"
         android:onClick="showNotification"
         android:text="알림 테스트용"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 추가된 버튼 1 -->
+    <android.widget.Button
+        android:id="@+id/button1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="알림 설정(임시)"
+        android:background="@drawable/button_border"
+        app:layout_constraintTop_toBottomOf="@+id/button_notify"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
+
+    <!-- 추가된 버튼 2 -->
+    <android.widget.Button
+        android:id="@+id/button2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="게시판(임시)"
+        android:background="@drawable/button_border2"
+        app:layout_constraintTop_toBottomOf="@+id/button1"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
+
+    <!-- 추가된 버튼 3 -->
+    <android.widget.Button
+        android:id="@+id/button3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="사전"
+        android:background="@drawable/button_border3"
+        app:layout_constraintTop_toBottomOf="@+id/button2"
+        app:layout_constraintBottom_toTopOf="@+id/button4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
+
+    <!-- 추가된 버튼 4 -->
+    <android.widget.Button
+        android:id="@+id/button4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="설정"
+        android:background="@drawable/button_border4"
+        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_weight="1" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
