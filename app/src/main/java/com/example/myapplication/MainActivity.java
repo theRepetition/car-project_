@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Build; // 빌드 불러오기
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -66,6 +67,15 @@ public class MainActivity extends AppCompatActivity {
         //나중에 어플 화면이 아니라 특정 기능으로 바로 이동하게 만들것
 
         createNotificationChannel(); //함수 호출
+        Button button3 = findViewById(R.id.button3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, dictionary_activity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
 
