@@ -41,7 +41,7 @@ public class dictionary_activity extends AppCompatActivity {
 
     private String getDefinition(String word) {
         String definition = "Not found";
-        // 여기에서 읽기 전용 데이터베이스를 엽니다.
+        // 읽기 전용 데이터베이스 열기
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String query = "SELECT * FROM " + DictionaryDatabaseHelper.TABLE_NAME + " WHERE " + DictionaryDatabaseHelper.COLUMN_WORD + " = ?";
@@ -57,7 +57,7 @@ public class dictionary_activity extends AppCompatActivity {
             }
             cursor.close();
         }
-        db.close(); // 데이터베이스를 닫습니다.
+        db.close(); // 데이터베이스 닫기
         return definition;
     }
 }
