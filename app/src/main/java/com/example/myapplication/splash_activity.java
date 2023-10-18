@@ -2,8 +2,8 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;  // Handler
-import android.content.Intent; // Intent
+import android.os.Handler;  // 핸들러
+import android.content.Intent; // 인텐트
 
 public class splash_activity extends AppCompatActivity {
 
