@@ -5,22 +5,22 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-  <EditText
+  <AutoCompleteTextView
       android:id="@+id/wordInput"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:hint="Enter word"/>
+      android:hint="검색어를 입력하세요" />
 
   <Button
       android:id="@+id/searchButton"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Search"/>
+      android:text="검색" />
 
   <TextView
       android:id="@+id/definitionOutput"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingTop="16dp"/>
+      android:paddingTop="16dp" />
 
 </LinearLayout>
