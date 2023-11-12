@@ -1,6 +1,4 @@
 package com.example.myapplication;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,8 +10,12 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MotionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Distance_cal extends AppCompatActivity {
     private EditText replacementDateEditText;
@@ -23,11 +25,18 @@ public class Distance_cal extends AppCompatActivity {
     private Spinner mileageSpinner;
     private ListView carPartsListView;
     private CarPartsAdapter carPartsAdapter;
+    private List<DBHelper.RecommendedReplacement> recommendedReplacements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_distance_cal);
+
+        dbHelper = new DBHelper(this);  // DBHelper 객체 초기화
+
+        // 권장 교체 주기 데이터 가져오기
+        recommendedReplacements = dbHelper.getAllRecommendedReplacements();
+
 
         // 이미지 뷰와 버튼 변수 선언
         ImageView imageView = findViewById(R.id.imageView);
@@ -58,30 +67,18 @@ public class Distance_cal extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         carPartsListView = findViewById(R.id.carPartsListView);
 
-        // DBHelper 인스턴스 생성
-        dbHelper = new DBHelper(this);
-
 
         // 부품 목록 설정
-        List<String> partList = new ArrayList<>();
-        partList.add("타이어");
-        partList.add("엔진오일");
-        partList.add("에어필터");
-        // 나머지 부품 추가
-
+        List<String> partList = dbHelper.getAllPartNames();
         ArrayAdapter<String> partAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, partList);
         partAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         partSpinner.setAdapter(partAdapter);
 
         // 주행 거리 목록 설정
         List<String> mileageList = new ArrayList<>();
-        mileageList.add("10 km");
-        mileageList.add("20 km");
+        mileageList.add("10");
+        mileageList.add("20");
         // 나머지 주행 거리 추가
-
-        ArrayAdapter<String> mileageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mileageList);
-        mileageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mileageSpinner.setAdapter(mileageAdapter);
 
         // CarPartsAdapter를 ListView에 연결
         carPartsAdapter = new CarPartsAdapter(this, new ArrayList<CarPart>());
@@ -91,8 +88,6 @@ public class Distance_cal extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 // 사용자가 입력한 데이터 가져오기
                 String partName = partSpinner.getSelectedItem().toString();
                 String replacementDate = replacementDateEditText.getText().toString();
@@ -109,12 +104,66 @@ public class Distance_cal extends AppCompatActivity {
                     carPartsAdapter.addAll(dbHelper.getAllCarParts());
                     // ListView를 업데이트한 후, 스크롤하여 최신 데이터를 볼 수 있도록 이동
                     carPartsListView.smoothScrollToPosition(carPartsAdapter.getCount() - 1);
+
+                    // 다음 교체 예정 주행 거리 계산
+                    int nextReplacementDistance = calculateNextReplacementDistance(replacementDate, partName);
+                    Toast.makeText(Distance_cal.this, "다음 교체 예정 주행 거리: " + nextReplacementDistance + " km", Toast.LENGTH_SHORT).show();
                 } else {
                     // 데이터 저장 중 오류 발생
                     Toast.makeText(Distance_cal.this, "데이터 저장 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
+    }
+
+
+
+    private int calculateTotalMileage(String replacementDate, String currentDateString, String partName) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+
+        try {
+            // 교체 날짜와 현재 날짜를 Date 객체로 파싱
+            Date replacementDateObj = dateFormat.parse(replacementDate);
+            Date currentDateObj = dateFormat.parse(currentDateString);
+
+            // 현재 날짜와 교체 날짜 간의 일수 차이 계산
+            long daysDifference = (currentDateObj.getTime() - replacementDateObj.getTime()) / (24 * 60 * 60 * 1000);
+
+            // 교체 날짜부터 현재까지의 총 주행 거리 계산
+            int totalMileage = Integer.parseInt(mileageSpinner.getSelectedItem().toString()) * (int) daysDifference;
+
+            return totalMileage;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return -1; // 오류 시 -1 반환
+    }
+
+    // 다음 교체 예정 주행 거리 계산
+    private int calculateNextReplacementDistance(String replacementDate, String partName) {
+        // 사용자가 입력한 데이터로 총 주행 거리 계산
+        String currentDate = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+        int totalMileage = calculateTotalMileage(replacementDate, currentDate, partName);
+
+        // 권장 교체 주기 데이터에서 해당 부품의 교체 주기 가져오기
+        int recommendedReplacementDistance = getRecommendedReplacementDistance(partName);
+
+        // 다음 교체 예정 주행 거리 계산
+        int nextReplacementDistance = recommendedReplacementDistance - totalMileage;
+
+        return nextReplacementDistance;
+    }
+
+    // 부품별 권장 교체 주행 거리 가져오기
+    private int getRecommendedReplacementDistance(String partName) {
+        // 권장 교체 주기 데이터에서 해당 부품의 교체 주기 찾기
+        for (DBHelper.RecommendedReplacement recommendedReplacement : recommendedReplacements) {
+            if (recommendedReplacement.getPartName().equals(partName)) {
+                return recommendedReplacement.getReplacementKilometers();
+            }
+        }
+
+        return 0; // 해당 부품의 권장 교체 주행 거리가 없으면 0 반환
     }
 }

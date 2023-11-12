@@ -24,6 +24,36 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long newRowId = db.insert("recommended_replacement", null, values);
     }
+    public List<String> getAllPartNames() {
+        List<String> partNames = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                "part_name"
+        };
+
+        Cursor cursor = db.query(
+                "recommended_replacement",
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            String partName = cursor.getString(cursor.getColumnIndexOrThrow("part_name"));
+            partNames.add(partName);
+        }
+
+        cursor.close();
+        db.close();
+
+        return partNames;
+    }
+
+
     public class RecommendedReplacement {
         private int id;
         private String partName;
@@ -37,8 +67,23 @@ public class DBHelper extends SQLiteOpenHelper {
             this.replacementKilometers = replacementKilometers;
         }
 
-        // 클래스 속성에 대한 게터와 세터를 작성하세요.
+        public int getId() {
+            return id;
+        }
+
+        public String getPartName() {
+            return partName;
+        }
+
+        public int getReplacementYears() {
+            return replacementYears;
+        }
+
+        public int getReplacementKilometers() {
+            return replacementKilometers;
+        }
     }
+    private List<RecommendedReplacement> recommendedReplacements = new ArrayList<>();
 
 
     @Override
@@ -148,6 +193,44 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return carParts;
     }
+
+    public List<RecommendedReplacement> getAllRecommendedReplacements() {
+        List<RecommendedReplacement> replacements = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                "_id",
+                "part_name",
+                "replacement_years",
+                "replacement_kilometers"
+        };
+
+        Cursor cursor = db.query(
+                "recommended_replacement",
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+            String partName = cursor.getString(cursor.getColumnIndexOrThrow("part_name"));
+            int replacementYears = cursor.getInt(cursor.getColumnIndexOrThrow("replacement_years"));
+            int replacementKilometers = cursor.getInt(cursor.getColumnIndexOrThrow("replacement_kilometers"));
+
+            RecommendedReplacement replacement = new RecommendedReplacement(id, partName, replacementYears, replacementKilometers);
+            replacements.add(replacement);
+        }
+
+        cursor.close();
+        db.close();
+
+        return replacements;
+    }
+
 
 
 
