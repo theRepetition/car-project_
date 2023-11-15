@@ -39,16 +39,42 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mileageDescriptionTextView"
         android:layout_marginTop="16dp"
-        android:hint="주행 거리 선택" />
+        android:hint="일평균 주행 거리" />
 
-    <!-- 나머지 입력 필드 -->
-    <EditText
-        android:id="@+id/replacementDateEditText"
+    <!-- 연, 월, 일 입력을 위한 LinearLayout -->
+    <LinearLayout
+        android:id="@+id/dayl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+
         android:layout_below="@id/mileageSpinner"
-        android:layout_marginTop="16dp"
-        android:hint="교체 날짜 (YYYY-MM-DD)" />
+        android:layout_marginTop="16dp">
+
+        <!-- 연도 입력 필드 -->
+        <EditText
+            android:id="@+id/yearEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.7"
+            android:hint="연도" />
+
+        <!-- 월 입력 필드 -->
+        <EditText
+            android:id="@+id/monthEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="월" />
+
+        <!-- 일 입력 필드 -->
+        <EditText
+            android:id="@+id/dayEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="일" />
+    </LinearLayout>
 
     <!-- "저장" 버튼 -->
     <Button
@@ -56,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="저장"
-        android:layout_below="@id/replacementDateEditText"
+        android:layout_below="@id/dayl"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
 
