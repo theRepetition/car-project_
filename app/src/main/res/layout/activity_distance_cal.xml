@@ -76,31 +76,66 @@
             android:hint="일" />
     </LinearLayout>
 
-    <!-- "저장" 버튼 -->
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
+    <!-- 저장, 교체주기 버튼 -->
+    <LinearLayout
+        android:id="@+id/save_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="저장"
+        android:orientation="horizontal"
         android:layout_below="@id/dayl"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp">
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="저장"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/viewRecommendedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="권장 교체 주기 보기"
+            android:layout_below="@id/carPartsListView"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/viewRecommendedButton"
-        android:layout_width="wrap_content"
+
+
+    <!-- 데이터 베이스 초기화 버튼 -->
+    <LinearLayout
+        android:id="@+id/remove_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="권장 교체 주기 보기"
-        android:layout_below="@id/carPartsListView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
+        android:orientation="horizontal"
+        android:layout_below="@id/save_button"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/clearDatabaseButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="전체 초기화"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="선택 삭제"
+            android:layout_below="@id/carPartsListView"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"/>/>
+
+    </LinearLayout>
 
     <!-- CarPartsAdapter에 연결된 ListView -->
     <ListView
         android:id="@+id/carPartsListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/saveButton"
+        android:layout_below="@id/remove_button"
         android:layout_marginTop="16dp" />
     <ImageView
         android:id="@+id/imageView"

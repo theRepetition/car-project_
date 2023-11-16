@@ -1,6 +1,8 @@
 package com.example.myapplication;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +33,10 @@ public class Distance_cal extends AppCompatActivity {
     private List<DBHelper.RecommendedReplacement> recommendedReplacements;
     // 연, 월, 일 EditText 필드
     private EditText yearEditText, monthEditText, dayEditText;
-
+    private String selectedPartName;
+    private String selectedDate;
+    private CarPart selectedCarPart;
+    private View selectedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +103,39 @@ public class Distance_cal extends AppCompatActivity {
         carPartsListView.setAdapter(carPartsAdapter);
 
         // "저장" 버튼 클릭 이벤트 리스너 설정
+        Button clearDatabaseButton = findViewById(R.id.clearDatabaseButton);
 
+
+
+
+        // 버튼 눌러서 데이터 베이스 초기화 하게
+        clearDatabaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbHelper.clearCarParts();
+                //리스트 바로 업데이트 해서 보여주기
+                carPartsAdapter.clear();
+                carPartsAdapter.notifyDataSetChanged();
+                Toast.makeText(Distance_cal.this, "전체 삭제 완료", Toast.LENGTH_SHORT).show();
+                // 필요한 경우 UI 업데이트
+            }
+
+
+        }
+
+
+
+        );
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (selectedView != null) {
+                    selectedView.setBackgroundColor(Color.TRANSPARENT); // 또는 원래 배경색으로 설정
+                    selectedView = null; // 선택된 뷰 참조 제거
+                }
+                // ListView 업데이트
+                carPartsAdapter.notifyDataSetChanged();
 
                 try {
 
@@ -143,6 +176,57 @@ public class Distance_cal extends AppCompatActivity {
                 }
             }
         });
+
+        carPartsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // 이전에 선택된 뷰의 배경색을 초기화
+                if (selectedView != null) {
+                    selectedView.setBackgroundColor(Color.TRANSPARENT); // 또는 원래 배경색으로 설정
+                }
+
+                // 새로 선택된 뷰의 배경색 변경
+                view.setBackgroundColor(Color.LTGRAY); // 선택된 항목의 배경색 지정
+                selectedView = view; // 선택된 뷰 저장
+
+                // 선택된 항목의 CarPart 객체를 가져오기
+                selectedCarPart = (CarPart) parent.getItemAtPosition(position);
+            }
+        });
+
+
+        Button deleteButton = findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (selectedView != null) {
+                    selectedView.setBackgroundColor(Color.TRANSPARENT); // 또는 원래 배경색으로 설정
+                    selectedView = null; // 선택된 뷰 참조 제거
+                }
+                // ListView 업데이트
+                carPartsAdapter.notifyDataSetChanged();
+
+                if (selectedCarPart != null) {
+                    // 데이터베이스에서 선택된 부품 데이터 삭제
+                    dbHelper.deleteCarPart(selectedCarPart.getName(), selectedCarPart.getReplacementDate());
+
+                    // 리스트 어댑터에서도 해당 항목을 제거하고 업데이트
+                    carPartsAdapter.remove(selectedCarPart);
+                    carPartsAdapter.notifyDataSetChanged();
+
+                    // 선택된 항목 초기화
+                    selectedCarPart = null;
+                } else {
+                    Toast.makeText(Distance_cal.this, "삭제할 항목을 선택", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
+        // 데이터베이스에서 차량 부품 데이터 로드 및 리스트뷰 업데이트
+        loadCarPartsData();
     }
 
 
@@ -194,5 +278,13 @@ public class Distance_cal extends AppCompatActivity {
         }
 
         return 0; // 해당 부품의 권장 교체 주행 거리가 없으면 0 반환
+    }
+
+    //DBHelper에서 리스트뷰 가져온 후 새로고침해서 바로보이게
+    private void loadCarPartsData() {
+        List<CarPart> carParts = dbHelper.getAllCarParts();
+        carPartsAdapter.clear();
+        carPartsAdapter.addAll(carParts);
+        carPartsAdapter.notifyDataSetChanged();
     }
 }

@@ -58,6 +58,11 @@ public class CarPartsAdapter extends BaseAdapter {
         carParts.clear();
         notifyDataSetChanged();
     }
+    //삭제
+    public void remove(CarPart carPart) {
+        carParts.remove(carPart);
+        notifyDataSetChanged();
+    }
 
     // addAll 메소드 정의
     public void addAll(List<CarPart> carParts) {
