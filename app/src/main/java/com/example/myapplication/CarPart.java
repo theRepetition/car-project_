@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import java.util.List;
+
 public class CarPart {
     private int id;
     private String name;
@@ -52,5 +54,15 @@ public class CarPart {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String calculateExpectedReplacementDate(List<DBHelper.RecommendedReplacement> recommendedReplacements) {
+        for (DBHelper.RecommendedReplacement replacement : recommendedReplacements) {
+            if (this.name.equals(replacement.getPartName())) {
+                // 교체 예정 날짜 계산 로직을 추가
+                // 현재 날짜에서 권장 교체 주기를 기반으로 교체 예정 날짜를 계산
+            }
+        }
+        return "계산된 날짜"; // 교체 예정 날짜를 문자열로 반환
     }
 }

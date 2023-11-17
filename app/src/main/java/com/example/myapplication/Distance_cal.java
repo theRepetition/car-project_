@@ -1,4 +1,8 @@
 package com.example.myapplication;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +41,8 @@ public class Distance_cal extends AppCompatActivity {
     private String selectedDate;
     private CarPart selectedCarPart;
     private View selectedView;
+    private static final String NOTIFICATION_PREFS = "NotificationPrefs";
+    private static final String NOTIFICATION_SENT_KEY = "notificationSent";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +71,9 @@ public class Distance_cal extends AppCompatActivity {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // 이미지 뷰를 숨깁니다.
+                // 이미지 뷰를 숨김
                 imageView.setVisibility(View.GONE);
-                return true; // 터치 이벤트를 소비하여 다른 이벤트가 발생하지 않도록 합니다.
+                return true; // 터치 이벤트를 소비하여 다른 이벤트가 발생하지 않도록 함
             }
         });
 
@@ -93,13 +99,13 @@ public class Distance_cal extends AppCompatActivity {
         // 주행 거리 목록 설정
         mileageSpinner = findViewById(R.id.mileageSpinner);
         ArrayAdapter<String> mileageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                new String[]{"0", "20", "50", "100", "150", "200", "500"});
+                new String[]{"1", "20", "50", "100", "150", "200", "500"});
         mileageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mileageSpinner.setAdapter(mileageAdapter);
         // 나머지 주행 거리 추가
 
         // CarPartsAdapter를 ListView에 연결
-        carPartsAdapter = new CarPartsAdapter(this, new ArrayList<CarPart>());
+        carPartsAdapter = new CarPartsAdapter(this, new ArrayList<CarPart>(), recommendedReplacements);
         carPartsListView.setAdapter(carPartsAdapter);
 
         // "저장" 버튼 클릭 이벤트 리스너 설정
@@ -110,21 +116,16 @@ public class Distance_cal extends AppCompatActivity {
 
         // 버튼 눌러서 데이터 베이스 초기화 하게
         clearDatabaseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dbHelper.clearCarParts();
-                //리스트 바로 업데이트 해서 보여주기
-                carPartsAdapter.clear();
-                carPartsAdapter.notifyDataSetChanged();
-                Toast.makeText(Distance_cal.this, "전체 삭제 완료", Toast.LENGTH_SHORT).show();
-                // 필요한 경우 UI 업데이트
-            }
-
-
-        }
-
-
-
+                                                   @Override
+                                                   public void onClick(View v) {
+                                                       dbHelper.clearCarParts();
+                                                       //리스트 바로 업데이트 해서 보여주기
+                                                       carPartsAdapter.clear();
+                                                       carPartsAdapter.notifyDataSetChanged();
+                                                       Toast.makeText(Distance_cal.this, "전체 삭제 완료", Toast.LENGTH_SHORT).show();
+                                                       // 필요한 경우 UI 업데이트
+                                                   }
+                                               }
         );
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +228,9 @@ public class Distance_cal extends AppCompatActivity {
 
         // 데이터베이스에서 차량 부품 데이터 로드 및 리스트뷰 업데이트
         loadCarPartsData();
+
+        // 알림
+        setupNotifications();
     }
 
 
@@ -287,4 +291,77 @@ public class Distance_cal extends AppCompatActivity {
         carPartsAdapter.addAll(carParts);
         carPartsAdapter.notifyDataSetChanged();
     }
+
+    private void setupNotifications() {
+        SharedPreferences prefs = getSharedPreferences(NOTIFICATION_PREFS, MODE_PRIVATE);
+        List<CarPart> carParts = dbHelper.getAllCarParts();
+        String currentDateString = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+        Calendar today = Calendar.getInstance();
+
+        for (CarPart carPart : carParts) {
+            String notificationKey = carPart.getName() + "_notification_sent";
+            boolean notificationSent = prefs.getBoolean(notificationKey, false);
+
+            if (!notificationSent) {
+                String expectedReplacementDate = CarPartUtils.calculateExpectedReplacementDate(
+                        carPart.getReplacementDate(),
+                        currentDateString,
+                        Integer.parseInt(carPart.getMileage()),
+                        recommendedReplacements,
+                        carPart.getName()
+                );
+                Calendar expectedDate = CarPartUtils.convertStringToCalendar(expectedReplacementDate);
+                Calendar oneWeekBefore = (Calendar) expectedDate.clone();
+                oneWeekBefore.add(Calendar.DAY_OF_YEAR, -7);
+
+                if ((isSameDay(today, oneWeekBefore) || today.after(oneWeekBefore)) && today.before(expectedDate)) {
+                    // 교체 예정 날짜가 일주일 이상 남았을 경우
+                    scheduleNotification(oneWeekBefore, carPart.getName() + " 교체 예정", "교체 예정일이 일주일 남았습니다. 교체일: " + expectedReplacementDate);
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean(notificationKey, true);
+                    editor.apply();
+                } else if (today.after(expectedDate)) {
+                    // 교체 예정 날짜가 이미 지났을 경우
+                    scheduleNotification(expectedDate, carPart.getName() + " 교체 예정", "교체 예정일이 지났습니다. 교체일: " + expectedReplacementDate);
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean(notificationKey, true);
+                    editor.apply();
+                }
+            }
+        }
+    }
+
+    private boolean isSameDay(Calendar cal1, Calendar cal2) {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private void scheduleNotification(Calendar scheduleTime, String title, String content) {
+
+        Intent notificationIntent = new Intent(this, NotificationReceiver.class);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_TITLE, title);
+        notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_CONTENT, content);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        // AlarmManager를 사용한 알림 예약 로직 구현
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    scheduleTime.getTimeInMillis(),
+                    pendingIntent
+
+            );
+
+        }
+
+    }
+
 }
