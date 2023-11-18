@@ -2,19 +2,15 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.NotificationChannel; //알림 채널
-import android.app.NotificationManager; //알림 관리자
+
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build; // 빌드 불러오기
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+
 
 public class MainActivity extends AppCompatActivity {
     Intent intent; //인텐트 지정
@@ -28,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //알림 채널
+        NotificationHelper.createNotificationChannel(this);
+        NotificationManager notificationManager = new NotificationManager(this);
+        notificationManager.setupNotifications();
         intent = new Intent(this, MainActivity.class);// 여기 부터
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
