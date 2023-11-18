@@ -23,16 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ScheduleCarPartCheck.scheduleWork(this);
         //알림 채널
         NotificationHelper.createNotificationChannel(this);
-        NotificationManager notificationManager = new NotificationManager(this);
-        notificationManager.setupNotifications();
-        intent = new Intent(this, MainActivity.class);// 여기 부터
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-        //여기까지는 버튼 누르면 알림을 통해 어플 들어가기
-        //나중에 어플 화면이 아니라 특정 기능으로 바로 이동하게 만들것
 
 
         Button button3 = findViewById(R.id.button3);

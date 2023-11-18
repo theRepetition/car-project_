@@ -1,8 +1,4 @@
 package com.example.myapplication;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -22,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import android.app.AlertDialog;
-import android.widget.DatePicker;
 import java.util.Calendar;
 
 public class Distance_cal extends AppCompatActivity {
@@ -108,7 +102,7 @@ public class Distance_cal extends AppCompatActivity {
         carPartsAdapter = new CarPartsAdapter(this, new ArrayList<CarPart>(), recommendedReplacements);
         carPartsListView.setAdapter(carPartsAdapter);
 
-        // "저장" 버튼 클릭 이벤트 리스너 설정
+        // "저장" 버튼 클릭 설정
         Button clearDatabaseButton = findViewById(R.id.clearDatabaseButton);
 
 
