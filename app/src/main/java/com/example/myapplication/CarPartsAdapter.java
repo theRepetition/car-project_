@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +20,7 @@ public class CarPartsAdapter extends BaseAdapter {
     public CarPartsAdapter(Context context, List<CarPart> carParts,List<DBHelper.RecommendedReplacement> recommendedReplacements) {
         this.context = context;
         this.carParts = carParts;
-        this.recommendedReplacements = recommendedReplacements;
+        this.recommendedReplacements = recommendedReplacements != null ? recommendedReplacements : new ArrayList<>();
     }
 
     @Override

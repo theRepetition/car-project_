@@ -9,6 +9,8 @@ public class CarPart {
     private String mileage;
     private String note;  // 'note' 필드 추가
 
+    private String expectedReplacementDate;
+
     public CarPart(int id, String name, String replacementDate, String mileage) {
         this.id = id;
         this.name = name;
@@ -47,6 +49,8 @@ public class CarPart {
     public void setReplacementDate(String replacementDate) {
         this.replacementDate = replacementDate;
     }
+    public String getExpectedReplacementDate() { return expectedReplacementDate;  }
+    public void setExpectedReplacementDate(String expectedReplacementDate) { this.expectedReplacementDate = expectedReplacementDate; }
 
     public void setMileage(String mileage) {
         this.mileage = mileage;

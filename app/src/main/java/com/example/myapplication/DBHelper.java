@@ -83,7 +83,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return replacementKilometers;
         }
     }
-    private List<RecommendedReplacement> recommendedReplacements = new ArrayList<>();
 
 
     @Override
@@ -244,9 +243,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return replacements;
     }
-
-
-
 
 
 }

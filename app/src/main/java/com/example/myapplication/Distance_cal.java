@@ -155,6 +155,7 @@ public class Distance_cal extends AppCompatActivity {
                     long result = dbHelper.insertOrUpdateCarPart(partName, mileage, formattedDate);
 
                     if (result != -1) {
+
                         Toast.makeText(Distance_cal.this, "데이터가 저장되었습니다.", Toast.LENGTH_SHORT).show();
                         // ListView 업데이트
                         carPartsAdapter.clear();
