@@ -83,7 +83,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return replacementKilometers;
         }
     }
-    private List<RecommendedReplacement> recommendedReplacements = new ArrayList<>();
 
 
     @Override
@@ -118,7 +117,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-
+ // - 같은 부품인데도 불구하고 데이터베이스에 덮어씌워지지 않는 문제
+ //- 주행거리가 같을때만 덮어 씌워짐 -> 해결 위해 아래 코드 수정
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // 업그레이드 로직 추가
@@ -132,9 +132,8 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(CarPartContract.CarPartEntry.COLUMN_REPLACEMENT_DATE, replacementDate);
         values.put(CarPartContract.CarPartEntry.COLUMN_MILEAGE, mileage);
 
-        String whereClause = CarPartContract.CarPartEntry.COLUMN_PART_NAME + " = ? AND " +
-                CarPartContract.CarPartEntry.COLUMN_MILEAGE + " = ?";
-        String[] whereArgs = {partName, mileage};
+        String whereClause = CarPartContract.CarPartEntry.COLUMN_PART_NAME + " = ?";
+        String[] whereArgs = {partName};
 
         int updatedRows = db.update(
                 CarPartContract.CarPartEntry.TABLE_NAME,
@@ -144,11 +143,9 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
         if (updatedRows > 0) {
-            // 기존 데이터가 업데이트된 경우
             db.close();
             return updatedRows;
         } else {
-            // 데이터가 존재하지 않아서 추가된 경우
             long newRowId = db.insert(CarPartContract.CarPartEntry.TABLE_NAME, null, values);
             db.close();
             return newRowId;
@@ -193,6 +190,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return carParts;
     }
+    // 데이터 베이스 청소 메소드
+    public void clearCarParts() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(CarPartContract.CarPartEntry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    public void deleteCarPart(String partName, String replacementDate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // 삭제할 항목을 식별하기 위한 조건을 설정
+        String selection = CarPartContract.CarPartEntry.COLUMN_PART_NAME + " = ? AND " + CarPartContract.CarPartEntry.COLUMN_REPLACEMENT_DATE + " = ?";
+        String[] selectionArgs = { partName, replacementDate };
+        db.delete(CarPartContract.CarPartEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
+    }
+
 
     public List<RecommendedReplacement> getAllRecommendedReplacements() {
         List<RecommendedReplacement> replacements = new ArrayList<>();
@@ -230,9 +243,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return replacements;
     }
-
-
-
 
 
 }
