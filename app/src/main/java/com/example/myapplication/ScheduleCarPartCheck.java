@@ -1,29 +1,39 @@
 package com.example.myapplication;
 
 import android.content.Context;
-
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.example.myapplication.CarPartWorker;
+
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduleCarPartCheck {
     public static void scheduleWork(Context context) {
-        // 1분 간격으로 반복되는 OneTimeWorkRequest 생성
-        OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(CarPartWorker.class);
 
-        // 필요한 경우 제약조건 설정
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-        builder.setConstraints(constraints);
+        Calendar calendar = Calendar.getInstance();
+        long currentTime = calendar.getTimeInMillis();
 
-        // 1분 후에 작업 실행(임시 시간)
-        OneTimeWorkRequest workRequest = builder
-                .setInitialDelay(1, TimeUnit.MINUTES)
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.SECOND, 00);
+
+        // 다음 날로 넘어갔으면 시간을 하루 더해주기
+        if (calendar.getTimeInMillis() < currentTime) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        long delay = calendar.getTimeInMillis() - currentTime;
+
+        // OneTimeWorkRequest 생성 및 초기 지연 시간 설정
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(CarPartWorker.class)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .setConstraints(new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build())
                 .build();
 
         // WorkManager를 사용하여 작업 예약

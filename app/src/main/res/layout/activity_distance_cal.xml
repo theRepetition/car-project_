@@ -30,16 +30,17 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/partSpinner"
         android:layout_marginTop="16dp"
-        android:text="하루 평균 주행 거리를 선택하세요:" />
+        android:text="하루 평균 주행 거리를 입력하세요:" />
 
-    <!-- 주행 거리 선택 스피너 -->
-    <Spinner
-        android:id="@+id/mileageSpinner"
+    <!-- 주행 거리 -->
+    <EditText
+        android:id="@+id/mileageText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mileageDescriptionTextView"
         android:layout_marginTop="16dp"
-        android:hint="일평균 주행 거리" />
+        android:inputType="number"
+        android:hint="하루 평균 주행 거리" />
 
     <!-- 연, 월, 일 입력을 위한 LinearLayout -->
     <LinearLayout
@@ -47,8 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-
-        android:layout_below="@id/mileageSpinner"
+        android:layout_below="@id/mileageText"
         android:layout_marginTop="16dp">
 
         <!-- 연도 입력 필드 -->
@@ -57,7 +57,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.7"
+            android:inputType="number"
             android:hint="연도" />
+
 
         <!-- 월 입력 필드 -->
         <EditText
@@ -65,6 +67,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="number"
             android:hint="월" />
 
         <!-- 일 입력 필드 -->
@@ -73,6 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:inputType="number"
             android:hint="일" />
     </LinearLayout>
 

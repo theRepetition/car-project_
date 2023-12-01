@@ -60,12 +60,12 @@ public class NotificationManager {
 
     public void setupNotifications() {
         // 로그 추가
-        Log.d("NotificationManager", "Setting up notifications");
+
         SharedPreferences prefs = context.getSharedPreferences(NOTIFICATION_PREFS, Context.MODE_PRIVATE);
         List<CarPart> carParts = dbHelper.getAllCarParts();
         String currentDateString = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         recommendedReplacements = dbHelper.getAllRecommendedReplacements();
-        Log.d("asdasdasd", recommendedReplacements.toString());
+
         for (CarPart carPart : carParts) {
             String notificationKey = carPart.getName() + "_notification_sent";
             boolean notificationSent = prefs.getBoolean(notificationKey, false);
@@ -92,25 +92,25 @@ public class NotificationManager {
             Calendar expectedDate = CarPartUtils.convertStringToCalendar(expectedReplacementDate);
             Calendar oneWeekBefore = (Calendar) expectedDate.clone();
             oneWeekBefore.add(Calendar.DAY_OF_YEAR, -7);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String dateString = dateFormat.format(expectedDate.getTime());
-            Log.d("asdasdasd", dateString);
+
             if (today.before(oneWeekBefore) && today.before(expectedDate)) {
                 // 교체 예정 날짜가 일주일 남았을 경우
                 scheduleNotification(oneWeekBefore, carPart.getName() + " 교체 예정:"+dateString, "교체 예정일이 일주일 남았습니다.");
-                Log.d("d일주일3", "일주일");
+
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(notificationKey, true);
                 editor.apply();
             } else if (isSameDay(today, expectedDate) || (today.after(expectedDate))) {
                 // 교체 예정 날짜가 이미 지났을 경우
                 scheduleNotification(expectedDate, carPart.getName() + " 교체 예정:"+dateString, "교체 예정일이 지났습니다.");
-                Log.d("지남2", "지남");
+
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(notificationKey, true);
                 editor.apply();
             } else {
-                Log.d("ㅌ", "X");
+
                 return;
             }
         }

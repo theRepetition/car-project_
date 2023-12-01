@@ -28,13 +28,13 @@ public class CarPartUtils {
 
                 int recommendedKilometers = getRecommendedReplacementKilometers(recommendedReplacements, partName);// 권장 교체주기(주행거리) 가져오기
                 String a= String.valueOf(recommendedKilometers);
-                Log.d("recommendedKilometers", a);
+
                 long daysUntilNextReplacement = (recommendedKilometers - totalMileageSinceReplacement) / dailyMileage;//다음교체까지 남은 일수 계산
                 String b= String.valueOf(daysUntilNextReplacement);
-                Log.d("daysUntilNextReplacement", b);
+
                 long expectedTime = currentDateObj.getTime() + (daysUntilNextReplacement * 24 * 60 * 60 * 1000L); //예상되는 교체 날짜 계산
                 String c= String.valueOf(expectedTime);
-                Log.d("expectedTime", c);
+
                 return dateFormat.format(new Date(expectedTime));
             }
         } catch (Exception e) {

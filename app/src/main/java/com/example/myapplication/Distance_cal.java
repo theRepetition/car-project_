@@ -25,7 +25,7 @@ public class Distance_cal extends AppCompatActivity {
     private Button saveButton;
     private DBHelper dbHelper;
     private Spinner partSpinner;
-    private Spinner mileageSpinner;
+    private EditText mileageText;
     private ListView carPartsListView;
     private CarPartsAdapter carPartsAdapter;
     private List<DBHelper.RecommendedReplacement> recommendedReplacements;
@@ -76,7 +76,7 @@ public class Distance_cal extends AppCompatActivity {
         monthEditText = findViewById(R.id.monthEditText);
         dayEditText = findViewById(R.id.dayEditText);
         partSpinner = findViewById(R.id.partSpinner);
-        mileageSpinner = findViewById(R.id.mileageSpinner);
+        mileageText = findViewById(R.id.mileageText);
         saveButton = findViewById(R.id.saveButton);
         carPartsListView = findViewById(R.id.carPartsListView);
 
@@ -90,12 +90,13 @@ public class Distance_cal extends AppCompatActivity {
             partSpinner.setSelection(0);
         }
 
-        // 주행 거리 목록 설정
-        mileageSpinner = findViewById(R.id.mileageSpinner);
-        ArrayAdapter<String> mileageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,
-                new String[]{"1", "20", "50", "100", "150", "200", "500"});
-        mileageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mileageSpinner.setAdapter(mileageAdapter);
+        // 주행 거리 설정
+        mileageText = findViewById(R.id.mileageText);
+        String mileageString = mileageText.getText().toString();
+        int mileage = 0;
+        try {
+            mileage = Integer.parseInt(mileageString);
+        } catch (NumberFormatException e){}
         // 나머지 주행 거리 추가
 
         // CarPartsAdapter를 ListView에 연결
@@ -151,7 +152,7 @@ public class Distance_cal extends AppCompatActivity {
 
                     // 데이터베이스 저장 로직 추가
                     String partName = partSpinner.getSelectedItem().toString();
-                    String mileage = mileageSpinner.getSelectedItem().toString();
+                    String mileage = mileageText.getText().toString();
                     long result = dbHelper.insertOrUpdateCarPart(partName, mileage, formattedDate);
 
                     if (result != -1) {
@@ -225,8 +226,7 @@ public class Distance_cal extends AppCompatActivity {
         loadCarPartsData();
 
         // 알림
-        NotificationManager notificationManager = new NotificationManager(this);
-        notificationManager.setupNotifications();
+
     }
 
 
@@ -243,7 +243,7 @@ public class Distance_cal extends AppCompatActivity {
             long daysDifference = (currentDateObj.getTime() - replacementDateObj.getTime()) / (24 * 60 * 60 * 1000);
 
             // 교체 날짜부터 현재까지의 총 주행 거리 계산
-            int totalMileage = Integer.parseInt(mileageSpinner.getSelectedItem().toString()) * (int) daysDifference;
+            int totalMileage = Integer.parseInt(mileageText.getText().toString()) * (int) daysDifference;
 
             return totalMileage;
         } catch (ParseException e) {

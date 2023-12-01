@@ -18,6 +18,6 @@ public class splash_activity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000); //스플래시 화면이 지속될 시간 지정
+        }, 1000); //스플래시 화면이 지속될 시간 지정
     }
 }
