@@ -94,6 +94,7 @@ public class Distance_cal extends AppCompatActivity {
         mileageText = findViewById(R.id.mileageText);
         String mileageString = mileageText.getText().toString();
         int mileage = 0;
+
         try {
             mileage = Integer.parseInt(mileageString);
         } catch (NumberFormatException e){}
@@ -126,6 +127,13 @@ public class Distance_cal extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String mileageString = mileageText.getText().toString();
+                if (mileageString.isEmpty()) {
+                    Toast.makeText(Distance_cal.this, "주행 거리를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    return; // 메소드 종료
+                }
+
+
                 if (selectedView != null) {
                     selectedView.setBackgroundColor(Color.TRANSPARENT); // 또는 원래 배경색으로 설정
                     selectedView = null; // 선택된 뷰 참조 제거

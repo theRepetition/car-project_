@@ -1,25 +1,32 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.myapplication.CarPartWorker;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduleCarPartCheck {
     public static void scheduleWork(Context context) {
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int defaultHour = 12; // 기본 시간 설정
+        int defaultMinute = 0; // 기본 분 설정
+        int hour = sharedPreferences.getInt("hour", defaultHour);
+        int minute = sharedPreferences.getInt("minute", defaultMinute); //preferences로 설정한 시간 불러오기
         Calendar calendar = Calendar.getInstance();
         long currentTime = calendar.getTimeInMillis();
 
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 00);
-        calendar.set(Calendar.SECOND, 00);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND, 10);
 
         // 다음 날로 넘어갔으면 시간을 하루 더해주기
         if (calendar.getTimeInMillis() < currentTime) {

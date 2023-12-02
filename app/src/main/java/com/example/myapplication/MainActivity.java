@@ -15,7 +15,12 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
     Intent intent; //인텐트 지정
     PendingIntent pendingIntent; //펜딩 인텐트 인텐트하고 같이 알림을 누르면 바로 어플로 이동되게 만들어줌
-
+    @Override
+    protected void onResume() { //시작및 복귀시 알림 호출
+        super.onResume();
+        ScheduleCarPartCheck.scheduleWork(this);
+        NotificationHelper.createNotificationChannel(this);//알림 채널
+    }
 
 
 
@@ -23,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ScheduleCarPartCheck.scheduleWork(this);
-        //알림 채널
-        NotificationHelper.createNotificationChannel(this);
 
 
         Button button3 = findViewById(R.id.button3);
