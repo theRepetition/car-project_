@@ -89,14 +89,14 @@
         android:orientation="horizontal"
         android:layout_below="@id/dayl"
         android:layout_marginTop="16dp">
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/saveButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="저장"
             android:layout_centerHorizontal="true"
             android:layout_weight="1"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewRecommendedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -117,14 +117,14 @@
         android:layout_below="@id/save_button"
         android:layout_marginTop="16dp">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/clearDatabaseButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="전체 초기화"
             android:layout_centerHorizontal="true"
             android:layout_weight="1"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/deleteButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
