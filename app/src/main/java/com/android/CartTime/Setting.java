@@ -23,8 +23,8 @@ public class Setting extends AppCompatActivity {
         timePicker = findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int defaultHour = 12; // 기본 시간 설정, 예: 오전 12시
-        int defaultMinute = 0; // 기본 분 설정, 예: 0분
+        int defaultHour = 12; // 기본 시간 설정
+        int defaultMinute = 0; // 기본 분 설정
 
         int hour = sharedPreferences.getInt("hour", defaultHour);
         int minute = sharedPreferences.getInt("minute", defaultMinute);

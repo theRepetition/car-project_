@@ -3,6 +3,7 @@ package com.android.CartTime;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -42,7 +43,8 @@ public class dictionary_activity extends AppCompatActivity {
         ArrayList<String> words = getAllWords();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, words);
         wordInputAuto.setAdapter(adapter);
-
+        definitionOutput = findViewById(R.id.definitionOutput);
+        definitionOutput.setMovementMethod(new ScrollingMovementMethod());
         wordInputAuto.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -74,7 +76,7 @@ public class dictionary_activity extends AppCompatActivity {
                 listViewResults.setVisibility(View.GONE);
 
                 // 전체 정의 표시
-                definitionOutput.setText(fullDefinition);
+                definitionOutput.setText(selectedWord + "\n \n" + fullDefinition);
                 definitionOutput.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
                 definitionOutput.setVisibility(View.VISIBLE);
             }
